@@ -1,0 +1,44 @@
+# docker-compose.yml
+version: '3'
+
+services:
+  client:
+    container_name: voda-blog-client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - VITE_SERVER_AUTH_URL=http://server:3001/api/auth
+    depends_on:
+      - server
+    restart: on-failure
+
+  server:
+    container_name: voda-blog-server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    ports:
+      - '3001:3001'
+    environment:
+      - JWT_KEY=testkey123
+      - MONGO_URI=mongodb://admin:pass@database:27017/vodablog?authSource=admin
+      - PORT=3001
+      - NODE_ENV=docker
+      - CORS_ORIGIN=http://localhost:3000
+    depends_on:
+      - database
+    restart: on-failure
+
+  database:
+    container_name: voda-blog-database
+    image: mongo
+    ports:
+      - '27017:27017'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+      - MONGO_INITDB_DATABASE=vodablog
+    restart: on-failure
