@@ -20,7 +20,7 @@ type Company = {
 
 // An interface that describes the properties
 // that are required to create a new User
-interface UserAttrs {
+export interface UserAttrs {
   email: string;
   password: string;
   name: string;
@@ -28,6 +28,7 @@ interface UserAttrs {
   phone?: string;
   website?: string;
   company?: Company;
+  tempID?: string;
 }
 
 // An interface that describes the properties
@@ -46,6 +47,7 @@ interface UserDoc extends mongoose.Document {
   phone?: string;
   website?: string;
   company?: Company;
+  tempID?: string;
 }
 
 const userSchema = new mongoose.Schema(
@@ -89,6 +91,10 @@ const userSchema = new mongoose.Schema(
         catchPhrase: String,
         bs: String,
       },
+      required: false,
+    },
+    tempID: {
+      type: String,
       required: false,
     },
   },

@@ -42,6 +42,7 @@ export type Post = {
   body: string;
   category: Category;
   readTime: number;
+  likes: number;
   createdAt: Date;
   user: User;
 };

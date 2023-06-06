@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { app } from './app';
+import { populateDB } from './services/populate-db';
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
@@ -10,19 +11,17 @@ const start = async () => {
     throw new Error('MONGO_URI must be defined');
   }
 
-  console.log('JWT_KEY: ', process.env.JWT_KEY);
-  console.log('MONGO_URI: ', process.env.MONGO_URI);
-  console.log('NODE_ENV: ', process.env.NODE_ENV);
-  console.log('CORS_ORIGIN: ', process.env.CORS_ORIGIN);
-  console.log('PORT: ', process.env.PORT);
-
   try {
     mongoose.set('strictQuery', false);
     await mongoose.connect(process.env.MONGO_URI);
 
     console.log('Connected to MongoDB');
 
+    // Populate database with users and posts from JSONPlaceholder, if there are none
+    populateDB();
+
     const PORT = process.env.PORT || 3001;
+
     app.listen(PORT, () => {
       console.log(`Listening on port ${PORT}!!!`);
     });

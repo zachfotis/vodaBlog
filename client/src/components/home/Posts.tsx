@@ -9,12 +9,16 @@ import NewPostForm from './NewPostForm';
 
 function Posts() {
   const { user } = useAuthContext();
-  const { posts } = useBlogContext();
+  const { posts, selectedCategories } = useBlogContext();
   const [selectedPosts, setSelectedPosts] = useState<Post[]>(posts);
 
   useEffect(() => {
-    setSelectedPosts(posts);
-  }, [posts]);
+    if (selectedCategories.length === 0) return setSelectedPosts(posts);
+    const selectedPosts = posts.filter((post) => {
+      return selectedCategories.some((selectedCategory) => post.category.includes(selectedCategory));
+    });
+    setSelectedPosts(selectedPosts);
+  }, [posts, selectedCategories]);
 
   return (
     <section
@@ -36,7 +40,7 @@ function Posts() {
         aria-label="Categories Navigation"
       >
         <h2 className="text-2xl font-[700] text-gray-800">Latest Posts</h2>
-        <Categories posts={posts} setSelectedPosts={setSelectedPosts} />
+        <Categories posts={posts} />
       </div>
       <div className="w-full flex flex-col justify-start items-center gap-10" role="list" aria-label="Post Thumbnails">
         {selectedPosts.length > 0 ? (

@@ -1,13 +1,30 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useBlogContext } from '../../context/BlogContext';
+import { Post } from '../../types';
 import './Like.css';
 
-function Like() {
-  const [checked, setChecked] = useState(false);
+interface LikeProps {
+  post: Post;
+}
+
+function Like({ post }: LikeProps) {
+  const { likedPosts, likePost } = useBlogContext();
+  const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+    const isPostLiked = likedPosts.find((likedPost) => likedPost.id === post.id);
+    if (isPostLiked) setIsLiked(true);
+    else setIsLiked(false);
+  }, [likedPosts, post]);
+
+  const handleLike = () => {
+    likePost(post.id);
+  };
 
   return (
     <div className="flex justify-start items-center gap-2">
       <label className="like_container">
-        <input type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} />
+        <input type="checkbox" checked={isLiked} onChange={handleLike} />
         <div className="checkmark">
           <svg viewBox="0 0 256 256">
             <rect fill="none" height="256" width="256"></rect>
@@ -20,7 +37,9 @@ function Like() {
           </svg>
         </div>
       </label>
-      <h2 className="text-sm font-[300]">0 likes</h2>
+      <h2 className="text-sm font-[300]">
+        {post.likes} {post.likes === 1 ? 'like' : 'likes'}
+      </h2>
     </div>
   );
 }

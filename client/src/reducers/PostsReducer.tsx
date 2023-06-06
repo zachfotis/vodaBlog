@@ -1,0 +1,27 @@
+import { Post } from '../types';
+
+type PostsReducerAction =
+  | { type: 'SET_POSTS'; payload: Post[] }
+  | { type: 'ADD_POST'; payload: Post }
+  | { type: 'UPDATE_POST'; payload: Post }
+  | { type: 'DELETE_POST'; payload: string };
+
+export const postsReducer = (state: Post[], action: PostsReducerAction): Post[] => {
+  switch (action.type) {
+    case 'SET_POSTS':
+      return action.payload;
+    case 'ADD_POST':
+      return [action.payload, ...state];
+    case 'UPDATE_POST':
+      return state.map((post: Post) => {
+        if (post.id === action.payload.id) {
+          return action.payload;
+        }
+        return post;
+      });
+    case 'DELETE_POST':
+      return state.filter((post: Post) => post.id !== action.payload);
+    default:
+      return state;
+  }
+};

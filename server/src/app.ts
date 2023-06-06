@@ -6,7 +6,8 @@ import express from 'express';
 import 'express-async-errors';
 import { NotFoundError } from './errors/index';
 import { errorHandler } from './middlewares/index';
-import { authRouter } from './routes/auth';
+import { authRouter } from './routes/authRouter';
+import { postsRouter } from './routes/postsRouter';
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use(
 );
 
 app.use('/api/auth', authRouter);
+app.use('/api/posts', postsRouter);
 
 app.all('*', async (req, res) => {
   throw new NotFoundError();

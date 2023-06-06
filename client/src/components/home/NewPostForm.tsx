@@ -1,5 +1,6 @@
 import { useReducer, useState } from 'react';
 import { FaMinus, FaPlus } from 'react-icons/fa';
+import { useBlogContext } from '../../context/BlogContext';
 import { Category } from '../../types';
 
 interface State {
@@ -36,6 +37,7 @@ function reducer(state: State, action: Action): State {
 }
 
 function NewPostForm() {
+  const { createNewPost } = useBlogContext();
   const [state, dispatch] = useReducer(reducer, initialState);
   const { title, text, category } = state;
   const [isExpanded, setIsExpanded] = useState(false);
@@ -56,8 +58,7 @@ function NewPostForm() {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // Do something with the form data, like send it to a server
-    console.log(title, text, category);
+    createNewPost(title, text, category);
     dispatch({ type: 'RESET' });
   };
 

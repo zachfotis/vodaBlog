@@ -1,5 +1,8 @@
 import { format } from 'date-fns';
 import { FaUserGraduate } from 'react-icons/fa';
+import { RiDeleteBin2Line } from 'react-icons/ri';
+import { useAuthContext } from '../../context/AuthContext';
+import { useBlogContext } from '../../context/BlogContext';
 import { Post } from '../../types';
 import CategoryBadge from './CategoryBadge';
 import Like from './Like';
@@ -9,6 +12,9 @@ interface PostThumbProps {
 }
 
 function PostThumb({ post }: PostThumbProps) {
+  const { user } = useAuthContext();
+  const { deletePost } = useBlogContext();
+
   return (
     <div className="w-full flex flex-col justify-start items-start gap-2 mt-5">
       <div className="flex justify-start items-center gap-2">
@@ -33,7 +39,10 @@ function PostThumb({ post }: PostThumbProps) {
         <CategoryBadge category={post.category} />
         {/* READ TIME */}
         <p className="text-xs font-[400] text-gray-700">{post.readTime} min read</p>
-        <Like />
+        <Like post={post} />
+        {user && user.id === post.user.id && (
+          <RiDeleteBin2Line className="text-xl text-gray-700 cursor-pointer" onClick={() => deletePost(post.id)} />
+        )}
       </div>
       {/* SEPARATOR */}
       <span className="w-full h-[1px] bg-gray-300 rounded-lg shadow-lg mt-5"></span>

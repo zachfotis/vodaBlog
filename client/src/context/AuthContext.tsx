@@ -26,7 +26,7 @@ function AuthContextProvider({ children }: AuthContextProviderProps) {
     const getCurrentUser = async () => {
       setLoading(true);
       try {
-        const data = await fetch(import.meta.env.VITE_SERVER_AUTH_URL + '/currentuser', {
+        const data = await fetch(import.meta.env.VITE_SERVER_AUTH_URL + '/auth/currentuser', {
           credentials: 'include',
         });
         const res = await data.json();
@@ -51,7 +51,7 @@ function AuthContextProvider({ children }: AuthContextProviderProps) {
     const login = async (user: LoginUser) => {
       setLoading(true);
       try {
-        const data = await fetch(import.meta.env.VITE_SERVER_AUTH_URL + '/signin', {
+        const data = await fetch(import.meta.env.VITE_SERVER_AUTH_URL + '/auth/signin', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(user),
@@ -82,7 +82,7 @@ function AuthContextProvider({ children }: AuthContextProviderProps) {
     const logout = async () => {
       setLoading(true);
       try {
-        const data = await fetch(import.meta.env.VITE_SERVER_AUTH_URL + '/signout', {
+        const data = await fetch(import.meta.env.VITE_SERVER_AUTH_URL + '/auth/signout', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -110,7 +110,7 @@ function AuthContextProvider({ children }: AuthContextProviderProps) {
     const register = async (user: RegisterUser) => {
       setLoading(true);
       try {
-        const data = await fetch(import.meta.env.VITE_SERVER_AUTH_URL + '/signup', {
+        const data = await fetch(import.meta.env.VITE_SERVER_AUTH_URL + '/auth/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(user),
