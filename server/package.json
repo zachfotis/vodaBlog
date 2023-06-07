@@ -9,8 +9,8 @@
   ],
   "scripts": {
     "clean": "del-cli build",
-    "build": "npm i && npm run clean && tsc",
-    "start": "npm i && npm run build && node build/index.js",
+    "build": "npm run clean && tsc",
+    "start": "npm run build && node build/index.js",
     "dev": "nodemon -r dotenv/config src/index.ts"
   },
   "author": "Fotios N. Zachopoulos",
