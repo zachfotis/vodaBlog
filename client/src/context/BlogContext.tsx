@@ -15,6 +15,10 @@ interface BlogContextProps {
   setSelectedCategories: React.Dispatch<React.SetStateAction<Category[]>>;
   createNewPost: (title: string, body: string, category: Category) => Promise<void>;
   deletePost: (postId: string) => Promise<void>;
+  fetchMyPosts: () => Promise<void>;
+  myPosts: Post[];
+  isLoading: boolean;
+  fetchMorePosts: () => Promise<void>;
 }
 
 interface BlogContextProviderProps {
@@ -31,38 +35,41 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
   const [likedPosts, dispatchLikedPosts] = useReducer(likedPostsReducer, []);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
-  const [isLongPolling, setIsLongPolling] = useState(false);
+  const [myPosts, setMyPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [pollingInterval, setPollingInterval] = useState<any>(null);
 
   useEffect(() => {
     if (user) {
-      fetchPosts();
+      fetchPosts(10);
       fetchLikedPosts();
     }
   }, [user]);
 
   useEffect(() => {
-    let interval: any;
+    clearInterval(pollingInterval);
+    setPollingInterval(null);
 
-    if (user && !isLongPolling) {
-      setIsLongPolling(true);
-      interval = setInterval(() => {
-        fetchPosts();
+    if (user && posts.length > 0) {
+      // Fetch posts every 5 seconds
+      const interval = setInterval(() => {
+        fetchPosts(posts.length);
       }, 5000);
-    } else {
-      setIsLongPolling(false);
-      clearInterval(interval);
+
+      setPollingInterval(interval);
     }
 
     return () => {
-      clearInterval(interval);
+      clearInterval(pollingInterval);
+      setPollingInterval(null);
     };
-  }, [user]);
+  }, [user, posts]);
 
-  // Post Functions
-  const fetchPosts = useCallback(async () => {
-    // setLoading(true);
+  // Post Handling Functions
+  const fetchPosts = async (numberOfPosts: number) => {
+    setIsLoading(true);
     try {
-      const response = await fetch(import.meta.env.VITE_SERVER_AUTH_URL + '/posts/', {
+      const response = await fetch(import.meta.env.VITE_SERVER_AUTH_URL + `/posts/specific/${numberOfPosts}`, {
         method: 'GET',
         credentials: 'include',
       });
@@ -85,24 +92,104 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
         });
 
-      dispatchPosts({ type: 'SET_POSTS', payload: modifiedData });
+      // If there are no posts, set posts to empty array
+      if (posts.length === 0) {
+        dispatchPosts({ type: 'SET_POSTS', payload: modifiedData });
+        return;
+      } else {
+        // WHEN A POST IS DELETED
+        // Check if there is a post in posts that is not in modifiedData and delete it
+        posts.forEach((post) => {
+          const postInModifiedData = modifiedData.find((p) => p.id === post.id);
+          if (!postInModifiedData) {
+            dispatchPosts({ type: 'DELETE_POST', payload: post.id });
+            // Refetch liked posts and my posts
+            fetchLikedPosts();
+            fetchMyPosts();
+          }
+        });
 
-      // check if post in likedPosts and update it
+        // WHEN A POST IS ADDED OR UPDATED
+        // Check if post in posts in posts and update it, if new add it
+        modifiedData.forEach((post) => {
+          const postInPosts = posts.find((p) => p.id === post.id);
+          if (postInPosts) {
+            // Check if post has different number of likes and update it
+            if (postInPosts.likes !== post.likes) {
+              dispatchPosts({ type: 'UPDATE_POST', payload: post });
+            }
+          } else {
+            dispatchPosts({ type: 'ADD_POST', payload: post });
+          }
+        });
+      }
+
+      // Check if post in likedPosts and update it
       modifiedData.forEach((post) => {
         const likedPost = likedPosts.find((likedPost) => likedPost.id === post.id);
         if (likedPost) {
           dispatchLikedPosts({ type: 'UPDATE_LIKED_POST', payload: post });
         }
       });
+
+      // Check if post in myPosts and update it
+      modifiedData.forEach((post) => {
+        const myPost = myPosts.find((myPost) => myPost.id === post.id);
+        if (myPost) {
+          setMyPosts((prev) => {
+            const index = prev.findIndex((post) => post.id === myPost.id);
+            const updatedPosts = [...prev];
+            updatedPosts[index] = post;
+            return updatedPosts;
+          });
+        }
+      });
     } catch (error) {
       console.log(error);
     } finally {
-      // setLoading(false);
+      setIsLoading(false);
     }
-  }, [likedPosts]);
+  };
+
+  const fetchMorePosts = useCallback(async () => {
+    // Pagination
+    const skip = posts.length;
+    const limit = 10;
+
+    // Create query string
+    const query = `?skip=${skip}&limit=${limit}`;
+
+    try {
+      const response = await fetch(import.meta.env.VITE_SERVER_AUTH_URL + '/posts' + query, {
+        method: 'GET',
+        credentials: 'include',
+      });
+      const data = await response.json();
+
+      const modifiedData: Post[] = data
+        .map((post: any): Post => {
+          return {
+            id: post.id,
+            title: post.title,
+            body: post.body,
+            category: post.category,
+            readTime: post.readTime,
+            createdAt: post.createdAt,
+            likes: post.likes,
+            user: post.userId,
+          };
+        })
+        .sort((a: Post, b: Post) => {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
+
+      dispatchPosts({ type: 'ADD_POSTS', payload: modifiedData });
+    } catch (error) {
+      console.log(error);
+    }
+  }, [posts.length]);
 
   const fetchLikedPosts = useCallback(async () => {
-    // setLoading(true);
     try {
       const response = await fetch(import.meta.env.VITE_SERVER_AUTH_URL + '/posts/liked', {
         method: 'GET',
@@ -130,10 +217,42 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
       dispatchLikedPosts({ type: 'SET_LIKED_POSTS', payload: modifiedData });
     } catch (error) {
       console.log(error);
-    } finally {
-      // setLoading(false);
     }
   }, []);
+
+  const fetchMyPosts = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(import.meta.env.VITE_SERVER_AUTH_URL + '/posts/my-posts', {
+        method: 'GET',
+        credentials: 'include',
+      });
+      const data = await response.json();
+
+      const modifiedData: Post[] = data
+        .map((post: any): Post => {
+          return {
+            id: post.id,
+            title: post.title,
+            body: post.body,
+            category: post.category,
+            readTime: post.readTime,
+            createdAt: post.createdAt,
+            likes: post.likes,
+            user: post.userId,
+          };
+        })
+        .sort((a: Post, b: Post) => {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
+
+      setMyPosts(modifiedData);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const likePost = useCallback(
     async (postId: string) => {
@@ -172,11 +291,21 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
         if (postIndex2 !== -1) {
           dispatchPosts({ type: 'UPDATE_POST', payload: modifiedData });
         }
+
+        // Find the post in the myPosts array and update its likes
+        const postIndex3 = myPosts.findIndex((post) => post.id === postId);
+        if (postIndex3 !== -1) {
+          setMyPosts((prev) => {
+            const updatedPosts = [...prev];
+            updatedPosts[postIndex3].likes = modifiedData.likes;
+            return updatedPosts;
+          });
+        }
       } catch (error) {
         console.log(error);
       }
     },
-    [likedPosts, posts]
+    [likedPosts, posts, myPosts]
   );
 
   const deletePost = useCallback(
@@ -202,16 +331,26 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
           user: data.userId,
         };
 
-        // Find the post in the posts array and delete it
-        const postIndex = posts.findIndex((post) => post.id === modifiedData.id);
+        // Find post in the posts array and delete it
+        const postIndex = posts.findIndex((post) => post.id === postId);
         if (postIndex !== -1) {
           dispatchPosts({ type: 'DELETE_POST', payload: postId });
         }
 
-        // Find the post in the likedPosts array and delete it
+        // Find post in the likedPosts array and delete it
         const postIndex2 = likedPosts.findIndex((post) => post.id === postId);
         if (postIndex2 !== -1) {
           dispatchLikedPosts({ type: 'DELETE_LIKED_POST', payload: postId });
+        }
+
+        // Find post in the myPosts array and delete it
+        const postIndex3 = myPosts.findIndex((post) => post.id === postId);
+        if (postIndex3 !== -1) {
+          setMyPosts((prev) => {
+            const updatedPosts = [...prev];
+            updatedPosts.splice(postIndex3, 1);
+            return updatedPosts;
+          });
         }
 
         toast.success('Post deleted successfully');
@@ -262,8 +401,23 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
       setSelectedCategories,
       createNewPost,
       deletePost,
+      fetchMyPosts,
+      myPosts,
+      isLoading,
+      fetchMorePosts,
     };
-  }, [posts, likedPosts, likePost, categories, selectedCategories, createNewPost, deletePost]);
+  }, [
+    posts,
+    likedPosts,
+    likePost,
+    categories,
+    selectedCategories,
+    createNewPost,
+    deletePost,
+    myPosts,
+    isLoading,
+    fetchMorePosts,
+  ]);
   return <BlogContext.Provider value={providerValues}>{children}</BlogContext.Provider>;
 }
 

@@ -60,7 +60,7 @@ export default Map;
 function MyCustomComponent({ setUserZoom }: { setUserZoom: (zoom: number) => void }) {
   const mapEvent = useMapEvents({});
 
-  mapEvent.addEventListener('zoomend', (e) => {
+  mapEvent.addEventListener('zoomend', () => {
     setUserZoom(mapEvent.getZoom());
   });
   return null;

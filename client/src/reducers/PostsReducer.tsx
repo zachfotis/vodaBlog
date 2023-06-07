@@ -3,6 +3,7 @@ import { Post } from '../types';
 type PostsReducerAction =
   | { type: 'SET_POSTS'; payload: Post[] }
   | { type: 'ADD_POST'; payload: Post }
+  | { type: 'ADD_POSTS'; payload: Post[] }
   | { type: 'UPDATE_POST'; payload: Post }
   | { type: 'DELETE_POST'; payload: string };
 
@@ -12,6 +13,8 @@ export const postsReducer = (state: Post[], action: PostsReducerAction): Post[] 
       return action.payload;
     case 'ADD_POST':
       return [action.payload, ...state];
+    case 'ADD_POSTS':
+      return [...state, ...action.payload];
     case 'UPDATE_POST':
       return state.map((post: Post) => {
         if (post.id === action.payload.id) {

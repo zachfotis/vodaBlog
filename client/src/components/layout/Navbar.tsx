@@ -23,7 +23,7 @@ function Navbar() {
             </label>
             <ul
               tabIndex={0}
-              className="mt-3 p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-40 space-y-2"
+              className="mt-3 p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-40 space-y-2 z-10"
             >
               <li>
                 <Link to="/">Home</Link>
@@ -32,10 +32,10 @@ function Navbar() {
                 <Link to="/profile">Profile</Link>
               </li>
               <li>
-                <Link to="/liked-posts">Liked Posts</Link>
+                <Link to="/my-posts">My Posts</Link>
               </li>
               <li>
-                <Link to="/your-posts">Your Posts</Link>
+                <Link to="/liked-posts">Liked Posts</Link>
               </li>
               <li>
                 <button onClick={logout}>Logout</button>

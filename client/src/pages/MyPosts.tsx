@@ -1,14 +1,20 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
+import Loader from '../components/common/Loader';
 import PostThumb from '../components/common/PostThumb';
 import ScrollToTop from '../components/common/ScrollToTop';
 import { useAuthContext } from '../context/AuthContext';
 import { useBlogContext } from '../context/BlogContext';
 import { Post } from '../types';
 
-function LikedPosts() {
+function MyPosts() {
   const { user } = useAuthContext();
-  const { likedPosts } = useBlogContext();
+  const { isLoading, myPosts, fetchMyPosts } = useBlogContext();
+
+  useEffect(() => {
+    fetchMyPosts();
+  }, []);
 
   // Redirect to login page if user is not logged in
   if (!user) return <Navigate to="/login" replace />;
@@ -27,21 +33,25 @@ function LikedPosts() {
         role="navigation"
         aria-label="New Post Navigation"
       >
-        <h1 className="text-3xl font-[700] text-gray-600">Liked Posts</h1>
+        <h1 className="text-3xl font-[700] text-gray-600">My Posts</h1>
       </div>
-      <div
-        className="w-full flex flex-col justify-start items-start gap-10 p-3"
-        role="list"
-        aria-label="Post Thumbnails"
-      >
-        <AnimatePresence>
-          {likedPosts.length > 0 ? (
-            likedPosts.map((post: Post) => <PostThumb key={post.id} post={post} />)
-          ) : (
-            <p className="font-[400] text-gray-600">No posts yet</p>
-          )}
-        </AnimatePresence>
-      </div>
+      {isLoading ? (
+        <Loader variant="normal" size="normal" text="Loading posts..." />
+      ) : (
+        <div
+          className="w-full flex flex-col justify-start items-start gap-10 p-3"
+          role="list"
+          aria-label="Post Thumbnails"
+        >
+          <AnimatePresence>
+            {myPosts && myPosts.length > 0 ? (
+              myPosts.map((post: Post) => <PostThumb key={post.id} post={post} showUserInfo={false} />)
+            ) : (
+              <p className="font-[400] text-gray-600">No posts yet</p>
+            )}
+          </AnimatePresence>
+        </div>
+      )}
       <div className="fixed right-5 bottom-5" role="navigation" aria-label="Scroll To Top Navigation">
         <ScrollToTop />
       </div>
@@ -49,4 +59,4 @@ function LikedPosts() {
   );
 }
 
-export default LikedPosts;
+export default MyPosts;
