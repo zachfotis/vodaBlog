@@ -318,18 +318,7 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
           credentials: 'include',
         });
 
-        const data = await response.json();
-
-        const modifiedData: Post = {
-          id: data.id,
-          title: data.title,
-          body: data.body,
-          category: data.category,
-          readTime: data.readTime,
-          createdAt: data.createdAt,
-          likes: data.likes,
-          user: data.userId,
-        };
+        await response.json();
 
         // Find post in the posts array and delete it
         const postIndex = posts.findIndex((post) => post.id === postId);

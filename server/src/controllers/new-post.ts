@@ -15,7 +15,9 @@ const newPostRoute = async (req: Request, res: Response) => {
 
   await post.save();
 
-  res.status(201).send(post);
+  const populatedPost = await post.populate('userId');
+
+  res.status(201).send(populatedPost);
 };
 
 export { newPostRoute };
