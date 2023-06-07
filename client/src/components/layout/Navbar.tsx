@@ -13,7 +13,7 @@ function Navbar() {
         <h1 className="text-xl font-[700]">Voda Blog</h1>
       </Link>
       <div className="flex justify-start items-center gap-5">
-        {user && <h1 className="text-sm font-[400] text-gray-700">{user.name}</h1>}
+        {user && <h1 className="text-sm font-[400] text-gray-700 hidden md:block">{user.name}</h1>}
         {user ? (
           <div className="dropdown dropdown-end">
             <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
@@ -21,12 +21,21 @@ function Navbar() {
                 <img src={UserImage} />
               </div>
             </label>
-            <ul tabIndex={0} className="mt-3 p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-40">
+            <ul
+              tabIndex={0}
+              className="mt-3 p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-40 space-y-2"
+            >
+              <li>
+                <Link to="/">Home</Link>
+              </li>
               <li>
                 <Link to="/profile">Profile</Link>
               </li>
               <li>
                 <Link to="/liked-posts">Liked Posts</Link>
+              </li>
+              <li>
+                <Link to="/your-posts">Your Posts</Link>
               </li>
               <li>
                 <button onClick={logout}>Logout</button>

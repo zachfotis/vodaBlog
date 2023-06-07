@@ -7,7 +7,10 @@ import Navbar from './components/layout/Navbar';
 import AuthContextProvider from './context/AuthContext';
 import BlogContextProvider from './context/BlogContext';
 import Home from './pages/Home';
+import LikedPosts from './pages/LikedPosts';
 import NotFound from './pages/NotFound';
+import Profile from './pages/Porifle';
+import YourPosts from './pages/YourPosts';
 
 function App() {
   return (
@@ -35,6 +38,9 @@ function AnimatedRoutes() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Login isLogin={false} />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/liked-posts" element={<LikedPosts />} />
+        <Route path="/your-posts" element={<YourPosts />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>

@@ -1,11 +1,12 @@
-import { format } from 'date-fns';
-import { FaUserGraduate } from 'react-icons/fa';
-import { RiDeleteBin2Line } from 'react-icons/ri';
+import { useState } from 'react';
+import { BiDotsVerticalRounded } from 'react-icons/bi';
+import { IoLocationSharp } from 'react-icons/io5';
+import { RiMessage2Fill } from 'react-icons/ri';
 import { useAuthContext } from '../../context/AuthContext';
 import { useBlogContext } from '../../context/BlogContext';
 import { Post } from '../../types';
-import CategoryBadge from './CategoryBadge';
-import Like from './Like';
+import PostThumbPost from './PostThumbPost';
+import PostThumbUser from './PostThumbUser';
 
 interface PostThumbProps {
   post: Post;
@@ -14,38 +15,58 @@ interface PostThumbProps {
 function PostThumb({ post }: PostThumbProps) {
   const { user } = useAuthContext();
   const { deletePost } = useBlogContext();
+  const [showPost, setShowPost] = useState(true);
+  const [showUser, setShowUser] = useState(false);
 
   return (
-    <div className="w-full flex flex-col justify-start items-start gap-2 mt-5">
-      <div className="flex justify-start items-center gap-2">
-        <FaUserGraduate className="text-base text-gray-700" />
-        {/* USERNAME */}
-        <p className="text-xs font-[500]">{post.user.name}</p>
-        {/* DATE */}
-        <p className="text-xs text-gray-700 font-[400]">{format(new Date(post.createdAt), 'LLLL d, yyyy HH:mm')}</p>
+    <div
+      className="relative w-full min-h-[280px] md:min-h-[220px] flex flex-col-reverse justify-start items-stretch gap-3
+      shadow-md rounded-md overflow-hidden md:flex-row md:gap-7"
+    >
+      {/* Left Part */}
+      <div className="flex h-8 md:flex-col md:h-auto">
+        <button
+          className={`flex-1 w-full flex justify-center items-center px-3 cursor-pointer ${
+            showPost ? 'bg-slate-600' : 'bg-slate-100'
+          }`}
+          onClick={() => {
+            setShowPost(true);
+            setShowUser(false);
+          }}
+        >
+          <RiMessage2Fill className={`text-xl ${showPost ? 'text-white' : 'text-black'}`} />
+        </button>
+        <button
+          className={`flex-1 w-full flex justify-center items-center px-3 cursor-pointer ${
+            showUser ? 'bg-slate-600' : 'bg-slate-100'
+          }`}
+          onClick={() => {
+            setShowPost(false);
+            setShowUser(true);
+          }}
+        >
+          <IoLocationSharp className={`text-2xl ${showUser ? 'text-white' : 'text-black'}`} />
+        </button>
       </div>
-      <div className="flex flex-col justify-start items-start gap-1 mt-2">
-        {/* TITLE */}
-        <h1 className="text-xl font-[600] leading-normal">
-          {post.title.charAt(0).toUpperCase() + post.title.slice(1)}
-        </h1>
-        <div className="flex justify-start items-start gap-5 mobile:flex-col">
-          {/* BODY */}
-          <p className="text-sm font-[300] mt-1">{post.body.charAt(0).toUpperCase() + post.body.slice(1)}</p>
+      {/* Right Part */}
+      {showPost && <PostThumbPost post={post} />}
+      {showUser && <PostThumbUser post={post} />}
+
+      {/* Delete Post */}
+      {user && user.id === post.user.id && (
+        <div className="absolute top-3 right-2 dropdown dropdown-end">
+          <label tabIndex={0}>
+            <BiDotsVerticalRounded className="text-2xl text-black-700 hover:scale-110 transition-all duration-300 ease-in-out cursor-pointer" />
+          </label>
+          <ul tabIndex={0} className="mt-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-md">
+            <li className="relative w-full">
+              <button className="w-full px-5 rounded-md" onClick={() => deletePost(post.id)}>
+                Delete
+              </button>
+            </li>
+          </ul>
         </div>
-      </div>
-      <div className="flex justify-start items-center gap-5 mt-2 mobile:mt-5">
-        {/* CATEGORY */}
-        <CategoryBadge category={post.category} />
-        {/* READ TIME */}
-        <p className="text-xs font-[400] text-gray-700">{post.readTime} min read</p>
-        <Like post={post} />
-        {user && user.id === post.user.id && (
-          <RiDeleteBin2Line className="text-xl text-gray-700 cursor-pointer" onClick={() => deletePost(post.id)} />
-        )}
-      </div>
-      {/* SEPARATOR */}
-      <span className="w-full h-[1px] bg-gray-300 rounded-lg shadow-lg mt-5"></span>
+      )}
     </div>
   );
 }

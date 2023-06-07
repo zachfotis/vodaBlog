@@ -10,7 +10,7 @@ export default {
         black: '#292929',
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Montserrat', 'sans-serif'],
       },
     },
   },

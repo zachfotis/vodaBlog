@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useState } from 'react';
+import { toast } from 'react-toastify';
 import { likedPostsReducer } from '../reducers/LikedPostsReducer';
 import { postsReducer } from '../reducers/PostsReducer';
 import { Category, Post } from '../types';
@@ -30,6 +31,7 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
   const [likedPosts, dispatchLikedPosts] = useReducer(likedPostsReducer, []);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
+  const [isLongPolling, setIsLongPolling] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -39,13 +41,22 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
   }, [user]);
 
   useEffect(() => {
-    // Long polling for new posts
-    const interval = setInterval(() => {
-      fetchPosts();
-    }, 5000);
+    let interval: any;
 
-    return () => clearInterval(interval);
-  }, []);
+    if (user && !isLongPolling) {
+      setIsLongPolling(true);
+      interval = setInterval(() => {
+        fetchPosts();
+      }, 5000);
+    } else {
+      setIsLongPolling(false);
+      clearInterval(interval);
+    }
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [user]);
 
   // Post Functions
   const fetchPosts = useCallback(async () => {
@@ -88,7 +99,7 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
     } finally {
       // setLoading(false);
     }
-  }, []);
+  }, [likedPosts]);
 
   const fetchLikedPosts = useCallback(async () => {
     // setLoading(true);
@@ -202,6 +213,8 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
         if (postIndex2 !== -1) {
           dispatchLikedPosts({ type: 'DELETE_LIKED_POST', payload: postId });
         }
+
+        toast.success('Post deleted successfully');
       } catch (error) {
         console.log(error);
       }
@@ -232,6 +245,7 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
       };
 
       dispatchPosts({ type: 'ADD_POST', payload: modifiedData });
+      toast.success('Post created successfully');
     } catch (error) {
       console.log(error);
     }
@@ -249,7 +263,7 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
       createNewPost,
       deletePost,
     };
-  }, [posts, likedPosts, likePost, categories, selectedCategories]);
+  }, [posts, likedPosts, likePost, categories, selectedCategories, createNewPost, deletePost]);
   return <BlogContext.Provider value={providerValues}>{children}</BlogContext.Provider>;
 }
 

@@ -34,7 +34,7 @@ function Categories({ posts }: CategoriesProps) {
           <button
             className={`${
               selectedCategories.includes(category) && getColor(category)
-            } min-w-[100px] shrink-0 text-center px-3 py-1 rounded-lg shadow-md text-sm snap-center cursor-pointer ${
+            } min-w-[100px] shrink-0 text-center px-3 py-1 rounded-md shadow-md text-sm snap-center cursor-pointer ${
               selectedCategories.includes(category) ? 'outline-dashed' : 'outline-solid'
             } outline outline-1 outline-black
             hover:border-greyDark hover:shadow-lg`}

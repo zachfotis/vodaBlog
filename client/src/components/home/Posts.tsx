@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useAuthContext } from '../../context/AuthContext';
 import { useBlogContext } from '../../context/BlogContext';
@@ -21,8 +22,12 @@ function Posts() {
   }, [posts, selectedCategories]);
 
   return (
-    <section
-      className="w-full max-w-[1280px] mx-auto flex flex-col justify-start items-start gap-10 p-5"
+    <motion.section
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      exit={{ opacity: 0 }}
+      className="w-full max-w-[1280px] mx-auto flex flex-col justify-start items-start gap-10 p-5 md:p-10"
       role="region"
       aria-label="Main Content"
     >
@@ -42,7 +47,7 @@ function Posts() {
         <h2 className="text-2xl font-[700] text-gray-800">Latest Posts</h2>
         <Categories posts={posts} />
       </div>
-      <div className="w-full flex flex-col justify-start items-center gap-10" role="list" aria-label="Post Thumbnails">
+      <div className="w-full flex flex-col justify-start items-start gap-12" role="list" aria-label="Post Thumbnails">
         {selectedPosts.length > 0 ? (
           selectedPosts.map((post) => <PostThumb key={post.id} post={post} />)
         ) : (
@@ -52,7 +57,7 @@ function Posts() {
       <div className="fixed right-5 bottom-5" role="navigation" aria-label="Scroll To Top Navigation">
         <ScrollToTop />
       </div>
-    </section>
+    </motion.section>
   );
 }
 

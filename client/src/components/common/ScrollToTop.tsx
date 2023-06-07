@@ -28,7 +28,7 @@ function ScrollToTop() {
   return (
     <button
       onClick={handleClick}
-      className="bg-blue-300 py-2 px-4 rounded"
+      className="bg-slate-600 py-2 px-4 rounded"
       style={{ display: isVisible ? 'block' : 'none' }}
     >
       <IconContext.Provider value={{ color: 'white', size: '1.5em' }}>

@@ -16,7 +16,7 @@ function CategoryBadge({ category }: CategoryBadgeProps) {
   }, [category]);
 
   return (
-    <p className={`${colorClass} min-w-[100px] text-center text-xs font-[400] px-3 py-1 rounded-lg`}>
+    <p className={`${colorClass} min-w-[100px] text-center text-xs font-[400] px-3 py-1 rounded-md`}>
       {category.charAt(0).toUpperCase() + category.slice(1)}
     </p>
   );

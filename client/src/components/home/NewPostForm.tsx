@@ -72,7 +72,7 @@ function NewPostForm() {
         type="button"
         onClick={handleExpandClick}
         className={`w-full p-2 border border-gray-300 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-transparent transition-colors duration-300 ${
-          isExpanded ? 'bg-blue-300 text-black hover:bg-opacity-90' : 'bg-white text-blue-600 hover:bg-gray-100'
+          isExpanded ? 'bg-slate-600 text-white hover:bg-opacity-90' : 'bg-white text-blue-600 hover:bg-gray-100'
         }`}
       >
         {isExpanded ? <FaMinus className="inline-block mr-2" /> : <FaPlus className="inline-block mr-2" />}
@@ -133,7 +133,7 @@ function NewPostForm() {
           </select>
           <button
             type="submit"
-            className="w-full md:max-w-[150px] px-4 py-2 bg-blue-300 text-black font-[500] rounded-lg shadow-sm hover:bg-opacity-90 mt-5"
+            className="w-full md:max-w-[150px] px-4 py-2 bg-slate-500 text-white font-[500] rounded-lg shadow-sm hover:bg-opacity-90 mt-5"
           >
             Post
           </button>

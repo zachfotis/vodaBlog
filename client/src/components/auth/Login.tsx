@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { MdAlternateEmail, MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { Link, Navigate } from 'react-router-dom';
@@ -41,7 +42,11 @@ function Login({ isLogin = true }: LoginProps) {
   if (user) return <Navigate to="/" replace />;
 
   return (
-    <section
+    <motion.section
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      exit={{ opacity: 0 }}
       className="w-full max-w-[1280px] mx-auto flex-1 flex flex-col justify-center items-center gap-10"
       role="region"
       aria-label="Main Content"
@@ -169,7 +174,7 @@ function Login({ isLogin = true }: LoginProps) {
           </p>
         )}
       </form>
-    </section>
+    </motion.section>
   );
 }
 
