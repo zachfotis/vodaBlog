@@ -11,7 +11,7 @@ import { postsRouter } from './routes/postsRouter';
 
 const app = express();
 
-app.set('trust proxy', true);
+app.set('trust proxy', 1);
 
 app.use(json());
 app.use(express.urlencoded({ extended: true }));
@@ -24,8 +24,7 @@ app.use(
 app.use(
   cookieSession({
     signed: false,
-//     secure: process.env.NODE_ENV !== 'dev' && process.env.NODE_ENV !== 'docker',
-    secure: false,
+    secure: process.env.NODE_ENV !== 'dev' && process.env.NODE_ENV !== 'docker',
     httpOnly: true,
   })
 );
