@@ -25,6 +25,7 @@ app.use(
   cookieSession({
     signed: false,
     secure: process.env.NODE_ENV !== 'dev' && process.env.NODE_ENV !== 'docker',
+    sameSite: 'none',
     httpOnly: true,
   })
 );
