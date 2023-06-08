@@ -4,7 +4,8 @@ import { currentUserRoute } from '../controllers/current-user';
 import { signinRoute } from '../controllers/signin';
 import { signoutRoute } from '../controllers/signout';
 import { signupRoute } from '../controllers/signup';
-import { currentUser } from '../middlewares';
+import { updateUserRoute } from '../controllers/update-user';
+import { currentUser, requireAuth } from '../middlewares';
 import { validateRequest } from '../middlewares/index';
 
 const router = express.Router();
@@ -21,8 +22,16 @@ const signupValidation = [
   body('name').trim().notEmpty().withMessage('You must supply a name'),
 ];
 
+const updateValidation = [
+  body('address').notEmpty().withMessage('You must supply an address'),
+  body('company').notEmpty().withMessage('You must supply a company'),
+  body('phone').trim().notEmpty().withMessage('You must supply a phone'),
+  body('website').trim().notEmpty().withMessage('You must supply a website'),
+];
+
 // ROUTES
 router.get('/currentuser', currentUser, currentUserRoute);
+router.put('/updateuser', currentUser, requireAuth, updateValidation, validateRequest, updateUserRoute);
 router.post('/signin', signinValidation, validateRequest, signinRoute);
 router.post('/signup', signupValidation, validateRequest, signupRoute);
 router.post('/signout', signoutRoute);

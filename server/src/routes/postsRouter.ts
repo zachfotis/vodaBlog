@@ -1,5 +1,5 @@
 import express from 'express';
-import { body } from 'express-validator';
+import { body, param } from 'express-validator';
 import { deletePostRoute } from '../controllers/delete-post';
 import { getLikedPostsRoute } from '../controllers/get-liked-posts';
 import { getPostsRoute } from '../controllers/get-posts';
@@ -7,14 +7,14 @@ import { likePostRoute } from '../controllers/like-post';
 import { getMyPosts } from '../controllers/my-posts';
 import { newPostRoute } from '../controllers/new-post';
 import { getSpecificPostsRoute } from '../controllers/specific-posts';
-import { currentUser, requireAuth } from '../middlewares';
+import { currentUser, requireAuth, validateRequest } from '../middlewares';
 
 const router = express.Router();
 
 // VALIDATIONS
 const specificPostsValidation = [
-  body('num').not().isEmpty().withMessage('Value is required'),
-  body('num').isNumeric().withMessage('Value must be a number'),
+  param('num').not().isEmpty().withMessage('Value is required'),
+  param('num').isNumeric().withMessage('Value must be a number'),
 ];
 
 const newPostValidation = [
@@ -29,11 +29,11 @@ const deletePostValidation = [body('postId').not().isEmpty().withMessage('Post I
 
 // ROUTES
 router.get('/', currentUser, requireAuth, getPostsRoute);
-router.get('/specific/:num', currentUser, requireAuth, specificPostsValidation, getSpecificPostsRoute);
+router.get('/specific/:num', currentUser, requireAuth, specificPostsValidation, validateRequest, getSpecificPostsRoute);
 router.get('/liked', currentUser, requireAuth, getLikedPostsRoute);
 router.get('/my-posts', currentUser, requireAuth, getMyPosts);
-router.post('/', currentUser, requireAuth, newPostValidation, newPostRoute);
-router.put('/', currentUser, requireAuth, likePostValidation, likePostRoute);
-router.delete('/', currentUser, requireAuth, deletePostValidation, deletePostRoute);
+router.post('/', currentUser, requireAuth, newPostValidation, validateRequest, newPostRoute);
+router.put('/', currentUser, requireAuth, likePostValidation, validateRequest, likePostRoute);
+router.delete('/', currentUser, requireAuth, deletePostValidation, validateRequest, deletePostRoute);
 
 export { router as postsRouter };
