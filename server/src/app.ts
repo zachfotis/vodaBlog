@@ -24,7 +24,8 @@ app.use(
 app.use(
   cookieSession({
     signed: false,
-    secure: process.env.NODE_ENV !== 'dev' && process.env.NODE_ENV !== 'docker',
+//     secure: process.env.NODE_ENV !== 'dev' && process.env.NODE_ENV !== 'docker',
+    secure: false,
     httpOnly: true,
   })
 );
