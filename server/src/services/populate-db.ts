@@ -14,9 +14,27 @@ async function populateUsers() {
     const data = await fetch('https://jsonplaceholder.typicode.com/users');
     const users = await data.json();
 
+    // Array with 10 paris of [lat, lng] coordinates in Europe
+    const coordinates = [
+      [48.8566, 2.3522],
+      [51.5074, 0.1278],
+      [52.52, 13.405],
+      [55.7558, 37.6173],
+      [59.3293, 18.0686],
+      [41.9028, 12.4964],
+      [41.3851, 2.1734],
+      [45.4642, 9.19],
+      [52.2297, 21.0122],
+      [48.1486, 17.1077],
+    ];
+
+    let i = 0;
     for (const user of users) {
       user.password = 'password';
       user.tempID = user.id;
+      user.address.geo.lat = coordinates[i][0];
+      user.address.geo.lng = coordinates[i][1];
+      i++;
       const newUser = User.build(user);
       await newUser.save();
     }
@@ -40,7 +58,10 @@ async function populatePosts() {
     }
 
     const data = await fetch('https://jsonplaceholder.typicode.com/posts');
-    const posts = await data.json();
+    let posts = await data.json();
+
+    // Randomize posts
+    posts = posts.sort(() => Math.random() - 0.5);
 
     for (const post of posts) {
       const user = await User.findOne({ tempID: post.userId });
