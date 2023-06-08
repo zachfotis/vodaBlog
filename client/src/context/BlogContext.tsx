@@ -19,6 +19,7 @@ interface BlogContextProps {
   myPosts: Post[];
   isLoading: boolean;
   fetchMorePosts: () => Promise<void>;
+  unlikeAllPosts: () => Promise<void>;
 }
 
 interface BlogContextProviderProps {
@@ -308,6 +309,32 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
     [likedPosts, posts, myPosts]
   );
 
+  const unlikeAllPosts = useCallback(async () => {
+    try {
+      const response = await fetch(import.meta.env.VITE_SERVER_AUTH_URL + '/posts/unlike-all', {
+        method: 'PUT',
+        credentials: 'include',
+      });
+
+      const unlikedPosts = await response.json();
+
+      dispatchLikedPosts({ type: 'SET_LIKED_POSTS', payload: [] });
+
+      // Find the post in the posts array and update its likes using UPDATE_POST
+      unlikedPosts.forEach((post: Post) => {
+        const postIndex = posts.findIndex((p) => p.id === post.id);
+        if (postIndex !== -1) {
+          dispatchPosts({ type: 'UPDATE_POST', payload: post });
+        }
+      });
+
+      toast.success('All posts unliked');
+    } catch (error) {
+      console.log(error);
+      toast.error('Something went wrong');
+    }
+  }, []);
+
   const deletePost = useCallback(
     async (postId: string) => {
       try {
@@ -394,6 +421,7 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
       myPosts,
       isLoading,
       fetchMorePosts,
+      unlikeAllPosts,
     };
   }, [
     posts,
@@ -406,6 +434,7 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
     myPosts,
     isLoading,
     fetchMorePosts,
+    unlikeAllPosts,
   ]);
   return <BlogContext.Provider value={providerValues}>{children}</BlogContext.Provider>;
 }

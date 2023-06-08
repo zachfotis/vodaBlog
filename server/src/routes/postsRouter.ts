@@ -7,6 +7,7 @@ import { likePostRoute } from '../controllers/like-post';
 import { getMyPosts } from '../controllers/my-posts';
 import { newPostRoute } from '../controllers/new-post';
 import { getSpecificPostsRoute } from '../controllers/specific-posts';
+import { unlikeAllPostsRoute } from '../controllers/unlike-all-posts';
 import { currentUser, requireAuth, validateRequest } from '../middlewares';
 
 const router = express.Router();
@@ -31,6 +32,7 @@ const deletePostValidation = [body('postId').not().isEmpty().withMessage('Post I
 router.get('/', currentUser, requireAuth, getPostsRoute);
 router.get('/specific/:num', currentUser, requireAuth, specificPostsValidation, validateRequest, getSpecificPostsRoute);
 router.get('/liked', currentUser, requireAuth, getLikedPostsRoute);
+router.put('/unlike-all', currentUser, requireAuth, unlikeAllPostsRoute);
 router.get('/my-posts', currentUser, requireAuth, getMyPosts);
 router.post('/', currentUser, requireAuth, newPostValidation, validateRequest, newPostRoute);
 router.put('/', currentUser, requireAuth, likePostValidation, validateRequest, likePostRoute);

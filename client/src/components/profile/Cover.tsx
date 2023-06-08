@@ -51,12 +51,12 @@ function Cover({ currentUser, setCurrentUser, isEditing, setIsEditing }: IProps)
         <p className="text-lg font-[500] text-gray-600">{currentUser.email}</p>
         {!isEditing ? (
           <BiEdit
-            className="absolute top-0 right-0 text-2xl text-gray-600 cursor-pointer"
+            className="md:absolute bottom-0 top-0 right-0 text-2xl text-gray-600 cursor-pointer mt-2"
             onClick={() => setIsEditing(!isEditing)}
           />
         ) : (
           <button
-            className="absolute top-0 right-0 btn btn-sm btn-success btn-outline"
+            className="md:absolute bottom-0 top-0 right-0 btn btn-sm btn-success btn-outline mt-2"
             onClick={() => {
               setIsEditing(!isEditing);
               updateUser(currentUser);

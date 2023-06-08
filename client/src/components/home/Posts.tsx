@@ -44,8 +44,7 @@ function Posts() {
             alt="Pipe"
             className="w-full h-[400px] object-cover object-center
             transition-all duration-500 ease-in-out transform hover:scale-105
-            filter brightness-100 hover:brightness-110
-          "
+            filter brightness-100 hover:brightness-110"
           />
         </div>
         <h1 className="text-3xl font-[700] text-gray-600">Welcome {user?.name.split(' ')[0] || ''}</h1>
