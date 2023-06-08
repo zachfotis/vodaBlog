@@ -12,6 +12,7 @@ import { postsRouter } from './routes/postsRouter';
 const app = express();
 
 app.use(json());
+app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,
