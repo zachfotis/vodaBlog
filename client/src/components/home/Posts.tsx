@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import BannerImage from '../../assets/banner.jpg';
 import { useAuthContext } from '../../context/AuthContext';
 import { useBlogContext } from '../../context/BlogContext';
 import { Post } from '../../types';
@@ -32,10 +33,21 @@ function Posts() {
       aria-label="Main Content"
     >
       <div
-        className="w-full flex flex-col justify-start items-start gap-10 mt-5"
+        className="w-full flex flex-col justify-start items-start gap-10"
         role="navigation"
         aria-label="New Post Navigation"
       >
+        {/* Banner */}
+        <div className="w-full flex justify-center items-center rounded-sm overflow-hidden shadow-md">
+          <img
+            src={BannerImage}
+            alt="Pipe"
+            className="w-full h-[400px] object-cover object-center
+            transition-all duration-500 ease-in-out transform hover:scale-105
+            filter brightness-100 hover:brightness-110
+          "
+          />
+        </div>
         <h1 className="text-3xl font-[700] text-gray-600">Welcome {user?.name.split(' ')[0] || ''}</h1>
         <NewPostForm />
       </div>

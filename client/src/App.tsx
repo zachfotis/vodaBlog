@@ -8,7 +8,6 @@ import AuthContextProvider from './context/AuthContext';
 import BlogContextProvider from './context/BlogContext';
 import Home from './pages/Home';
 import LikedPosts from './pages/LikedPosts';
-import MyPosts from './pages/MyPosts';
 import NotFound from './pages/NotFound';
 import Profile from './pages/Porifle';
 
@@ -40,7 +39,6 @@ function AnimatedRoutes() {
         <Route path="/register" element={<Login isLogin={false} />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/liked-posts" element={<LikedPosts />} />
-        <Route path="/my-posts" element={<MyPosts />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>

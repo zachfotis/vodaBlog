@@ -7,12 +7,12 @@ function Navbar() {
   const { user, logout } = useAuthContext();
 
   return (
-    <nav className="w-full mx-auto flex justify-between items-center gap-10 px-5 py-2 border-b border-1 shadow-md mb-2">
+    <nav className="w-full mx-auto flex justify-between items-center gap-2 md:gap-10 px-5 py-2 border-b border-1 shadow-md mb-2">
       <Link to="/" className="flex justify-start items-center gap-3">
         <img src={LogoImage} alt="logo" className="w-8 pb-2" />
         <h1 className="text-xl font-[700]">Voda Blog</h1>
       </Link>
-      <div className="flex justify-start items-center gap-5">
+      <div className="flex justify-start items-center gap-0 md:gap-5">
         {user && <h1 className="text-sm font-[400] text-gray-700 hidden md:block">{user.name}</h1>}
         {user ? (
           <div className="dropdown dropdown-end">
@@ -30,9 +30,6 @@ function Navbar() {
               </li>
               <li>
                 <Link to="/profile">Profile</Link>
-              </li>
-              <li>
-                <Link to="/my-posts">My Posts</Link>
               </li>
               <li>
                 <Link to="/liked-posts">Liked Posts</Link>

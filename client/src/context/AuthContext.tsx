@@ -8,6 +8,7 @@ interface AuthContextProps {
   login: (user: LoginUser) => Promise<void>;
   register: (user: RegisterUser) => Promise<void>;
   logout: () => Promise<void>;
+  updateUser: (user: User) => Promise<void>;
 }
 
 interface AuthContextProviderProps {
@@ -137,7 +138,39 @@ function AuthContextProvider({ children }: AuthContextProviderProps) {
       }
     };
 
-    return { user, login, logout, register };
+    // Update User function
+    const updateUser = async (user: User) => {
+      setLoading(true);
+
+      try {
+        const data = await fetch(import.meta.env.VITE_SERVER_AUTH_URL + '/auth/updateuser', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(user),
+          credentials: 'include',
+        });
+        const res = await data.json();
+
+        const errors: CustomError[] = res?.errors;
+
+        if (errors && errors.length > 0) {
+          res.errors.forEach((error: CustomError) => toast.error(error.message));
+        }
+
+        if (res?.id && res?.email && res?.name) {
+          const user: User = res;
+          setUser(user);
+          toast.success('User updated successfully');
+        }
+      } catch (error) {
+        console.log(error);
+        toast.error('User update failed');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return { user, login, logout, register, updateUser };
   }, [user]);
 
   return (

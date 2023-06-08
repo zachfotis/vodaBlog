@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { MdAlternateEmail, MdVisibility, MdVisibilityOff } from 'react-icons/md';
 import { Link, Navigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import BannerImage from '../../assets/banner.jpg';
 import { useAuthContext } from '../../context/AuthContext';
 
 interface LoginProps {
@@ -47,12 +48,18 @@ function Login({ isLogin = true }: LoginProps) {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       exit={{ opacity: 0 }}
-      className="w-full max-w-[1280px] mx-auto flex-1 flex flex-col justify-center items-center gap-10"
+      className="relative w-full mx-auto -mt-2 flex-1 flex flex-col justify-center items-center gap-10"
       role="region"
       aria-label="Main Content"
     >
+      <img
+        src={BannerImage}
+        alt="Banner"
+        className="absolute top-0 left-0 w-full h-full object-cover object-center -z-20 
+        filter opacity-10 brightness-75 saturate-125"
+      />
       <form
-        className="w-[90%] max-w-[500px] border border-1 rounded-md shadow-lg p-7 flex flex-col justify-center items-center gap-10 mb-20"
+        className="w-[90%] max-w-[500px] bg-white border border-1 rounded-md shadow-lg p-7 flex flex-col justify-center items-center gap-10 mb-20"
         onSubmit={handleSubmit}
       >
         <div className="w-full flex justify-center items-center">
