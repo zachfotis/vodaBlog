@@ -68,7 +68,7 @@ You can visit the live version of the application [here](https://blog.fzachopoul
 2. On the client directory, run `npm install` to install the dependencies.
 3. On the server directory, run `npm install` to install the dependencies.
 4. Make sure to have a MongoDB instance running on your machine. If you don't, you can use Docker to run one. Make sure the MongoDB instance is running on port 27017.
-5. Modify the environment variables to match your setup. You can find them on the .env files on the client and server directories. In case you are using Docker, you can modify the environment variables on the docker-compose.yaml file.
+5. The environment variables are already set up for local development, but you can still modify them to match your setup. You can find them on the .env files on the client and server directories. In case you are using Docker, you can modify the environment variables on the docker-compose.yaml file.
 6. On the server directory, run `npm run dev` to start the server.
 7. On the client directory, run `npm run dev` to start the client.
 
