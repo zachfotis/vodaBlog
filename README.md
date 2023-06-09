@@ -71,6 +71,7 @@ You can visit the live version of the application [here](https://blog.fzachopoul
 5. The environment variables are already set up for local development, but you can still modify them to match your setup. You can find them on the .env files on the client and server directories. In case you are using Docker, you can modify the environment variables on the docker-compose.yaml file.
 6. On the server directory, run `npm run dev` to start the server.
 7. On the client directory, run `npm run dev` to start the client.
+8. Visit http://localhost:3000 to see the application.
 
 In case you use Docker and want to modify the client's environmental variables, you can do so on the docker-compose.yaml file but make sure to change the .env file as well, because VITE requires them in build time.
 
