@@ -53,7 +53,7 @@ Server:
 
 You can visit the live version of the application [here](https://blog.fzachopoulos.com/).
 
-### The easy way
+### The easy way (Docker is required)
 
 1. Clone the repository.
 2. On the root directory, run `npm run docker:run` to build and run the application in a Docker container.
