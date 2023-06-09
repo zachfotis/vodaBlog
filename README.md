@@ -24,6 +24,7 @@ A blog application built with React, Tailwind CSS, TypeScript, Vite, Express.js,
 - Like posts
 - User profiles
 - Long polling for new posts and likes
+- Auto initialization of the database with dummy data from [JSON Placeholder](https://jsonplaceholder.typicode.com/)
 
 ## Prerequisites
 
