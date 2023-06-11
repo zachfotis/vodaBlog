@@ -76,22 +76,9 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
       });
       const data = await response.json();
 
-      const modifiedData: Post[] = data
-        .map((post: any): Post => {
-          return {
-            id: post.id,
-            title: post.title,
-            body: post.body,
-            category: post.category,
-            readTime: post.readTime,
-            createdAt: post.createdAt,
-            likes: post.likes,
-            user: post.userId,
-          };
-        })
-        .sort((a: Post, b: Post) => {
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        });
+      const modifiedData = modifyPosts(data).sort((a: Post, b: Post) => {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
 
       // If there are no posts, set posts to empty array
       if (posts.length === 0) {
@@ -167,22 +154,9 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
       });
       const data = await response.json();
 
-      const modifiedData: Post[] = data
-        .map((post: any): Post => {
-          return {
-            id: post.id,
-            title: post.title,
-            body: post.body,
-            category: post.category,
-            readTime: post.readTime,
-            createdAt: post.createdAt,
-            likes: post.likes,
-            user: post.userId,
-          };
-        })
-        .sort((a: Post, b: Post) => {
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        });
+      const modifiedData = modifyPosts(data).sort((a: Post, b: Post) => {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
 
       dispatchPosts({ type: 'ADD_POSTS', payload: modifiedData });
     } catch (error) {
@@ -198,22 +172,9 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
       });
       const data = await response.json();
 
-      const modifiedData: Post[] = data
-        .map((post: any): Post => {
-          return {
-            id: post.id,
-            title: post.title,
-            body: post.body,
-            category: post.category,
-            readTime: post.readTime,
-            createdAt: post.createdAt,
-            likes: post.likes,
-            user: post.userId,
-          };
-        })
-        .sort((a: Post, b: Post) => {
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        });
+      const modifiedData = modifyPosts(data).sort((a: Post, b: Post) => {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
 
       dispatchLikedPosts({ type: 'SET_LIKED_POSTS', payload: modifiedData });
     } catch (error) {
@@ -230,22 +191,9 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
       });
       const data = await response.json();
 
-      const modifiedData: Post[] = data
-        .map((post: any): Post => {
-          return {
-            id: post.id,
-            title: post.title,
-            body: post.body,
-            category: post.category,
-            readTime: post.readTime,
-            createdAt: post.createdAt,
-            likes: post.likes,
-            user: post.userId,
-          };
-        })
-        .sort((a: Post, b: Post) => {
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        });
+      const modifiedData = modifyPosts(data).sort((a: Post, b: Post) => {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      });
 
       setMyPosts(modifiedData);
     } catch (error) {
@@ -267,16 +215,7 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
 
         const data = await response.json();
 
-        const modifiedData: Post = {
-          id: data.id,
-          title: data.title,
-          body: data.body,
-          category: data.category,
-          readTime: data.readTime,
-          createdAt: data.createdAt,
-          likes: data.likes,
-          user: data.userId,
-        };
+        const modifiedData = modifyPost(data);
 
         // FInd the post in the likedPosts array and add it or remove it
         const postIndex = likedPosts.findIndex((post) => post.id === postId);
@@ -318,15 +257,11 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
 
       const unlikedPosts = await response.json();
 
-      dispatchLikedPosts({ type: 'SET_LIKED_POSTS', payload: [] });
+      const modifiedData = modifyPosts(unlikedPosts);
 
-      // Find the post in the posts array and update its likes using UPDATE_POST
-      unlikedPosts.forEach((post: Post) => {
-        const postIndex = posts.findIndex((p) => p.id === post.id);
-        if (postIndex !== -1) {
-          dispatchPosts({ type: 'UPDATE_POST', payload: post });
-        }
-      });
+      dispatchPosts({ type: 'UPDATE_POSTS', payload: modifiedData });
+
+      dispatchLikedPosts({ type: 'SET_LIKED_POSTS', payload: [] });
 
       toast.success('All posts unliked');
     } catch (error) {
@@ -388,16 +323,7 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
 
       const data = await response.json();
 
-      const modifiedData: Post = {
-        id: data.id,
-        title: data.title,
-        body: data.body,
-        category: data.category,
-        readTime: data.readTime,
-        createdAt: data.createdAt,
-        likes: data.likes,
-        user: data.userId,
-      };
+      const modifiedData = modifyPost(data);
 
       dispatchPosts({ type: 'ADD_POST', payload: modifiedData });
       toast.success('Post created successfully');
@@ -405,6 +331,41 @@ function BlogContextProvider({ children }: BlogContextProviderProps) {
       console.log(error);
     }
   }, []);
+
+  const modifyPost = useCallback(
+    (post: any): Post => {
+      return {
+        id: post.id,
+        title: post.title,
+        body: post.body,
+        category: post.category,
+        readTime: post.readTime,
+        createdAt: post.createdAt,
+        likes: post.likes,
+        user: post.userId,
+      };
+    },
+    [posts]
+  );
+
+  const modifyPosts = useCallback(
+    (posts: Post[]) => {
+      const modifiedPosts = posts.map((post: any): Post => {
+        return {
+          id: post.id,
+          title: post.title,
+          body: post.body,
+          category: post.category,
+          readTime: post.readTime,
+          createdAt: post.createdAt,
+          likes: post.likes,
+          user: post.userId,
+        };
+      });
+      return modifiedPosts;
+    },
+    [posts]
+  );
 
   const providerValues = useMemo(() => {
     return {

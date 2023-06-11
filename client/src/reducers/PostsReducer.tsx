@@ -5,6 +5,7 @@ type PostsReducerAction =
   | { type: 'ADD_POST'; payload: Post }
   | { type: 'ADD_POSTS'; payload: Post[] }
   | { type: 'UPDATE_POST'; payload: Post }
+  | { type: 'UPDATE_POSTS'; payload: Post[] }
   | { type: 'DELETE_POST'; payload: string };
 
 export const postsReducer = (state: Post[], action: PostsReducerAction): Post[] => {
@@ -22,6 +23,15 @@ export const postsReducer = (state: Post[], action: PostsReducerAction): Post[] 
         }
         return post;
       });
+    case 'UPDATE_POSTS':
+      return state.map((post: Post) => {
+        const updatedPost = action.payload.find((p: Post) => p.id === post.id);
+        if (updatedPost) {
+          return updatedPost;
+        }
+        return post;
+      });
+
     case 'DELETE_POST':
       return state.filter((post: Post) => post.id !== action.payload);
     default:

@@ -5,7 +5,7 @@ import { Post } from '../models/Post';
 const unlikeAllPostsRoute = async (req: Request, res: Response) => {
   const userId = new mongoose.Types.ObjectId(req.currentUser!.id);
 
-  const posts = await Post.find({ likes: userId });
+  const posts = await Post.find({ likes: userId }).populate('userId');
 
   posts.forEach(async (post) => {
     const index = post.likes.indexOf(userId);
